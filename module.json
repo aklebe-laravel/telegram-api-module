@@ -1,0 +1,11 @@
+{
+    "name": "TelegramApi",
+    "alias": "telegram-api",
+    "description": "",
+    "keywords": [],
+    "priority": 1200,
+    "providers": [
+        "Modules\\TelegramApi\\app\\Providers\\TelegramApiServiceProvider"
+    ],
+    "files": []
+}

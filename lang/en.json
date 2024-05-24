@@ -1,0 +1,9 @@
+{
+  "Delete Telegram Connection": "Delete Telegram Connection",
+  "Delete Telegram ID ...": "Delete Telegram ID ...",
+  "Telegram disabled": "Telegram disabled",
+  "ask_delete_telegram_connection": "Do you really want to delete the telegram id from your account?",
+  "telegram_account_warning": "If you have an account already and you want connect to telegram, please login by your common way and link your telegram connection in your user profile. Otherwise you will create a different account!",
+  "telegram_connect_info": "Connect to Telegram.",
+  "telegram_privacy_data_info": "The following form came from Telegram itself."
+}
