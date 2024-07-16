@@ -5,9 +5,7 @@ namespace Modules\TelegramApi\app\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Modules\TelegramApi\Models\IdeHelperTelegramIdentity;
 use Modules\WebsiteBase\app\Models\Base\TraitBaseModel;
-
 
 /**
  * @mixin IdeHelperTelegramIdentity
