@@ -15,8 +15,8 @@ class TelegramIdentity extends Model
     use HasFactory;
     use TraitBaseModel;
 
-    const TYPE_GROUP = 'group';
-    const TYPE_CHANNEL = 'channel';
+    const string TYPE_GROUP = 'group';
+    const string TYPE_CHANNEL = 'channel';
 
     /**
      * @var array
@@ -43,7 +43,7 @@ class TelegramIdentity extends Model
      */
     public function finders(): BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'telegram_identity_findings', 'entity_id', 'finder_id')
+        return $this->belongsToMany(static::class, 'telegram_identity_findings', 'entity_id', 'finder_id')
             ->withTimestamps();
     }
 
@@ -52,7 +52,7 @@ class TelegramIdentity extends Model
      */
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'telegram_identity_findings', 'finder_id', 'entity_id')
+        return $this->belongsToMany(static::class, 'telegram_identity_findings', 'finder_id', 'entity_id')
             ->withTimestamps();
     }
 
