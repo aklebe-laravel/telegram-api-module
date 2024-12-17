@@ -29,15 +29,17 @@ class TelegramApiController extends Controller
 
     /**
      * @param  Request  $request
+     *
      * @return Application|ResponseFactory|Response
      */
-    public function login(Request $request)
+    public function login(Request $request): Response|Application|ResponseFactory
     {
         /** @var JsonViewResponse $json */
         $json = app(JsonViewResponse::class);
 
         if (!($requestUser = $request->post('user'))) {
             $json->setErrorMessage('Invalid request data.');
+
             return $json->go();
         }
 
