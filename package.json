@@ -1,11 +1,12 @@
 {
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "devDependencies": {
-    "lodash": "^4.17.21",
-    "postcss": "^8.3.7"
-  }
+    "private": true,
+    "description": "This module provides telegram api on your website.",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "lodash": "^4.17.21",
+        "postcss": "^8.3.7"
+    }
 }

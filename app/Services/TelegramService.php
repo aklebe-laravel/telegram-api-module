@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Modules\SystemBase\app\Services\Base\BaseService;
 use Modules\TelegramApi\app\Models\TelegramIdentity;
-use Modules\WebsiteBase\app\Services\Config;
+use Modules\WebsiteBase\app\Services\ConfigService;
 use Modules\WebsiteBase\app\Services\WebsiteTelegramService;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
@@ -25,9 +25,9 @@ class TelegramService extends BaseService
     protected WebsiteTelegramService $websiteTelegramService;
 
     /**
-     * @var Config
+     * @var ConfigService
      */
-    protected Config $config;
+    protected ConfigService $config;
 
     /**
      *
@@ -39,7 +39,7 @@ class TelegramService extends BaseService
     /*
      *
      */
-    public function __construct(WebsiteTelegramService $websiteTelegramService, Config $config)
+    public function __construct(WebsiteTelegramService $websiteTelegramService, ConfigService $config)
     {
         parent::__construct();
         $this->websiteTelegramService = $websiteTelegramService;

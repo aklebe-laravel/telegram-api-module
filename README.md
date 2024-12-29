@@ -5,7 +5,5 @@ A module for [Mercy Scaffold Application](https://github.com/aklebe-laravel/merc
 
 This module provides telegram on your website.
 
-### TODO
-
-- Remove WebsiteBase Dependencies
+Also requires the [Module WebsiteBase](https://github.com/aklebe-laravel/website-base-module.git)
 
