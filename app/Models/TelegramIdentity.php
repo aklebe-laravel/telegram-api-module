@@ -18,6 +18,11 @@ class TelegramIdentity extends Model
     const string TYPE_GROUP = 'group';
     const string TYPE_CHANNEL = 'channel';
 
+    const array Types = [
+        self::TYPE_GROUP => self::TYPE_GROUP,
+        self::TYPE_CHANNEL => self::TYPE_CHANNEL,
+    ];
+
     /**
      * @var array
      */

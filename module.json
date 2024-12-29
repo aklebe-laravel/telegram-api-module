@@ -1,9 +1,9 @@
 {
     "name": "TelegramApi",
     "alias": "telegram-api",
-    "description": "",
+    "description": "This module provides telegram api on your website.",
     "keywords": [],
-    "priority": 1200,
+    "priority": 3010,
     "providers": [
         "Modules\\TelegramApi\\app\\Providers\\TelegramApiServiceProvider"
     ],
