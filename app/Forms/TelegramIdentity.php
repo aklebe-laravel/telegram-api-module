@@ -90,7 +90,7 @@ class TelegramIdentity extends ModelBase
                                         'css_group'    => 'col-12 col-md-6 col-lg-3',
                                     ],
                                     'language_code'   => [
-                                        'html_element' => 'select_country',
+                                        'html_element' => 'website-base::select_country',
                                         //'disabled'     => true,
                                         'label'        => __('Language'),
                                         'cmpCi'        => true,
