@@ -8,9 +8,9 @@ use Modules\TelegramApi\app\Models\TelegramIdentity as TelegramIdentityModel;
 
 class ModuleCoreConfig extends ModuleCoreConfigBase
 {
-    public function extendJsonResource(JsonResource $jsonResource): void
+    public function extendDataSource(JsonResource $dataSource): void
     {
-        $jsonResource->resource['telegram_identities'] = TelegramIdentityModel::with([]); // just all
+        $dataSource->resource['telegram_identities'] = TelegramIdentityModel::with([]); // just all
     }
 
     /**
