@@ -41,7 +41,7 @@ class TelegramIdentity extends ModelBase
 
         return [
             ... $parentFormData,
-            'title'        => $this->makeFormTitle($this->jsonResource, 'id'),
+            'title'        => $this->makeFormTitle($this->getDataSource(), 'id'),
             'description'  => __('form_telegram_identity_description'),
             'tab_controls' => [
                 'base_item' => [
