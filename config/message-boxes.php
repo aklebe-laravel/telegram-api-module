@@ -1,6 +1,6 @@
 <?php
 return [
-    'telegram'            => [
+    'telegram' => [
         'login' => [
             'delete' => [
                 'title'   => 'Delete Telegram Connection',

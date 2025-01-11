@@ -2,6 +2,3 @@
 <b>{!! $subject !!}</b>
 
 {!! $content !!}
-
-<i>Viel Spaß und bis zum nächsten Mal!</i>
-<i>Zeug-Team</i>

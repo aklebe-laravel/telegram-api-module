@@ -10,21 +10,21 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Modules\SystemBase\app\Models\JsonViewResponse;
-use Modules\WebsiteBase\app\Services\WebsiteTelegramService;
+use Modules\TelegramApi\app\Services\TelegramService;
 
 class TelegramApiController extends Controller
 {
     /**
-     * @var WebsiteTelegramService
+     * @var TelegramService
      */
-    protected WebsiteTelegramService $websiteTelegramService;
+    protected TelegramService $telegramService;
 
     /**
-     * @param  WebsiteTelegramService  $websiteTelegramService
+     * @param  TelegramService  $telegramService
      */
-    public function __construct(WebsiteTelegramService $websiteTelegramService)
+    public function __construct(TelegramService $telegramService)
     {
-        $this->websiteTelegramService = $websiteTelegramService;
+        $this->telegramService = $telegramService;
     }
 
     /**
@@ -51,7 +51,7 @@ class TelegramApiController extends Controller
         ];
 
         // Create or update Telegram Identity and User related to this identity ...
-        $u = $this->websiteTelegramService->ensureTelegramUser($telegramIdentityModelData, [null]);
+        $u = $this->telegramService->ensureTelegramUser($telegramIdentityModelData, [null]);
         if (($user = $u['User']) && $u['TelegramIdentity']) {
 
             // @todo: loading screen ...

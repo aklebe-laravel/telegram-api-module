@@ -1,9 +1,13 @@
 {
-  "Delete Telegram Connection": "Telegram-Verbindung entfernen",
-  "Delete Telegram ID ...": "Telegram ID entfernen...",
-  "Telegram disabled": "Telegram ist deaktiviert",
-  "ask_delete_telegram_connection": "Willst du wirklich diese Telegram ID aus deinem Account löschen?",
-  "telegram_account_warning": "Wenn du bereits einen Account hast und ihn mit Telegram verbinden möchtest, dann melde dich bitte erst auf deinem Standardweg ein und verbinde dann Telegram über das Benutzerprofil. Andernfalls wirst du einen neuen Account erschaffen!",
-  "telegram_connect_info": "Verknüpft Dich mit Telegram. Nach der Telegram-Verifizierung wird sich unser Bot bei Dir per Telegram melden. Klicke\ndann in Deiner Telegram-App unten suf \"Start\".\nSobald Du Dich erfolgreich verbunden hast, und der Bot Dir den Erfolg bestätigt hat, kannst Du\nzukünftig mit nur einen Klick auf diese Website einloggen.",
-  "telegram_privacy_data_info": "Die folgende Eingabemaske kommt direkt von Telegram. Es wird KEINE Telefonnummer an uns übermittelt.\nWir erhalten nur deine Telegram ID, deinen Benutzernamen und dein Telegram Avatar."
+    "Delete Telegram Connection": "Telegram-Verbindung entfernen",
+    "Delete Telegram ID ...": "Telegram ID entfernen...",
+    "Telegram ID": "Telegram ID",
+    "Telegram disabled": "Telegram ist deaktiviert",
+    "Use Telegram": "Telegram benutzen",
+    "ask_delete_telegram_connection": "Willst du wirklich diese Telegram ID aus deinem Account löschen?",
+    "payment_method_description_telegram": "Telegram",
+    "payment_method_telegram": "Telegram",
+    "telegram_account_warning": "Wenn du bereits einen Account hast und ihn mit Telegram verbinden möchtest, dann melde dich bitte erst auf deinem Standardweg ein und verbinde dann Telegram über das Benutzerprofil. Andernfalls wirst du einen neuen Account erschaffen!",
+    "telegram_connect_info": "Verknüpft Dich mit Telegram. Nach der Telegram-Verifizierung wird sich unser Bot bei Dir per Telegram melden. Klicke\ndann in Deiner Telegram-App unten suf \"Start\".\nSobald Du Dich erfolgreich verbunden hast, und der Bot Dir den Erfolg bestätigt hat, kannst Du\nzukünftig mit nur einen Klick auf diese Website einloggen.",
+    "telegram_privacy_data_info": "Die folgende Eingabemaske kommt direkt von Telegram. Es wird KEINE Telefonnummer an uns übermittelt.\nWir erhalten nur deine Telegram ID, deinen Benutzernamen und dein Telegram Avatar."
 }
