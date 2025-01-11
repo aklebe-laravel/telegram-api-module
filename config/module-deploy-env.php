@@ -20,6 +20,18 @@ return [
                 ],
             ],
         ],
+        '0002' => [
+            [
+                'cmd'     => 'models',
+                'sources' => [
+                    'core-config.php',
+                    'model-attributes.php',
+                    'model-attribute-assignments.php',
+                    'view-templates.php',
+                    'notification-templates.php',
+                    'notification-concerns.php',
+                ],
+            ],
+        ],
     ],
-
 ];

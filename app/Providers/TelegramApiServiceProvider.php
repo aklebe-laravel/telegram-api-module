@@ -3,7 +3,11 @@
 namespace Modules\TelegramApi\app\Providers;
 
 use Modules\SystemBase\app\Providers\Base\ModuleBaseServiceProvider;
+use Modules\TelegramApi\app\Console\EnsureUsers;
 use Modules\TelegramApi\app\Console\TelegramGetUpdates;
+use Modules\TelegramApi\app\Services\Notification\Channels\Telegram;
+use Modules\TelegramApi\app\Services\TelegramApiService;
+use Modules\TelegramApi\app\Services\TelegramService;
 
 class TelegramApiServiceProvider extends ModuleBaseServiceProvider
 {
@@ -27,7 +31,8 @@ class TelegramApiServiceProvider extends ModuleBaseServiceProvider
         parent::boot();
 
         $this->commands([
-            TelegramGetUpdates::class
+            TelegramGetUpdates::class,
+            EnsureUsers::class,
         ]);
     }
 
@@ -40,8 +45,13 @@ class TelegramApiServiceProvider extends ModuleBaseServiceProvider
     {
         parent::register();
 
+        $this->app->singleton(TelegramService::class);
+        $this->app->singleton(TelegramApiService::class);
+        $this->app->singleton(Telegram::class);
+
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
     }
 
 }

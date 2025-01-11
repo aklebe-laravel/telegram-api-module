@@ -4,7 +4,8 @@ namespace Modules\TelegramApi\app\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
-use Modules\TelegramApi\app\Services\TelegramService;
+use Modules\TelegramApi\app\Services\TelegramApiService;
+use Symfony\Component\Console\Command\Command as CommandResult;
 
 class TelegramGetUpdates extends Command
 {
@@ -27,15 +28,15 @@ class TelegramGetUpdates extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         Cache::forget('TELEGRAM_BOTS_UPDATE');
 
-        /** @var TelegramService $telegramService */
-        $telegramService = app(TelegramService::class);
-        $telegramService->apiUpdateBotData();
+        /** @var TelegramApiService $telegramApiService */
+        $telegramApiService = app(TelegramApiService::class);
+        $telegramApiService->apiUpdateBotData();
 
-        return Command::SUCCESS;
+        return CommandResult::SUCCESS;
     }
 
 }

@@ -2,293 +2,229 @@
 
 namespace Modules\TelegramApi\app\Services;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Modules\Acl\app\Models\AclGroup;
+use Modules\Acl\app\Services\UserService;
 use Modules\SystemBase\app\Services\Base\BaseService;
 use Modules\TelegramApi\app\Models\TelegramIdentity;
-use Modules\WebsiteBase\app\Services\ConfigService;
-use Modules\WebsiteBase\app\Services\WebsiteTelegramService;
-use Telegram\Bot\Api;
-use Telegram\Bot\Exceptions\TelegramSDKException;
-use Telegram\Bot\Laravel\Facades\Telegram;
-use Telegram\Bot\Objects\Message;
-use Telegram\Bot\Objects\Update;
+use Modules\TelegramApi\app\Services\Notification\Channels\Telegram;
+use Modules\WebsiteBase\app\Models\ModelAttributeAssignment;
+use Modules\WebsiteBase\app\Models\User;
 
 class TelegramService extends BaseService
 {
     /**
-     * @var WebsiteTelegramService
-     * @todo: Move this WebsiteTelegramService things in event later ... telegram shouldn't have website dependency!
-     */
-    protected WebsiteTelegramService $websiteTelegramService;
-
-    /**
-     * @var ConfigService
-     */
-    protected ConfigService $config;
-
-    /**
-     *
-     *
-     * @var array
-     */
-    protected array $telegramEntitiesFound = [];
-
-    /*
-     *
-     */
-    public function __construct(WebsiteTelegramService $websiteTelegramService, ConfigService $config)
-    {
-        parent::__construct();
-        $this->websiteTelegramService = $websiteTelegramService;
-        $this->config = $config;
-    }
-
-    /**
-     * - Run for all defined bots in config('telegram.bots')
-     * - Read Bot info (getMe)
-     * - Read all chat groups, channels and users
-     * - write all to db
-     *
-     * @return void
-     * @todo: cache
-     */
-    public function apiUpdateBotData(): void
-    {
-        if (!$this->websiteTelegramService->isTelegramEnabled()) {
-            return;
-        }
-
-        try {
-
-            $ttlDefault = config('system-base.cache.default_ttl', 1);
-            $ttl = config('telegram.bots_update_ttl', $ttlDefault);
-            Cache::remember('TELEGRAM_BOTS_UPDATE', $ttl, function () {
-
-                foreach (config('telegram.bots') as $botName => $bot) {
-
-                    // For each bot reset the founds.
-                    // Gather new and old group chats and channels to set parent below.
-                    $this->telegramEntitiesFound = [];
-
-                    $botApi = Telegram::bot($botName);
-                    if ($botApi->getWebhookInfo()->url) {
-                        continue;
-                    }
-
-                    $response = $botApi->getMe();
-                    $requestedBotId = $response->id;
-                    $this->debug(sprintf("Updating telegram Bot %s (%s)", $botName, $requestedBotId));//, [$response]);
-
-                    $response = $botApi->getUpdates();
-
-                    foreach ($response as $update) {
-                        $this->resolveUpdateObjects($update);
-                    }
-
-                    // update all entries just found with their finder
-                    if ($this->telegramEntitiesFound) {
-                        //
-                        $this->debug(sprintf("%s telegram entities found.", count($this->telegramEntitiesFound)));
-
-                        // get the bot ...
-                        if ($requestedTelegramBot = TelegramIdentity::with([])
-                            ->where('telegram_id', $requestedBotId)
-                            ->first()) {
-                            foreach (TelegramIdentity::with([])
-                                         ->whereIn('telegram_id', $this->telegramEntitiesFound)
-                                         ->get() as $telegramUserFound) {
-                                $telegramUserFound->finders()->syncWithoutDetaching($requestedTelegramBot);
-                            }
-                        }
-                    }
-
-                }
-
-                return true;
-            });
-
-        } catch (\Exception $ex) {
-            $this->error("Exception: ".$ex->getMessage());
-            $this->error($ex->getTraceAsString());
-        }
-
-    }
-
-    /**
-     * @param  Update  $update
      * @return bool
      */
-    private function resolveUpdateObjects(Update $update): bool
+    public function isTelegramEnabled(): bool
     {
-        /** @var Message $message */
-        foreach ($update->getMessage() as $messageName => $message) {
-
-            switch ($messageName) {
-
-                case 'new_chat_members':
-                    // array of chat members?
-                    break;
-
-                // case 'new_chat_participant':
-                case 'new_chat_member':
-                case 'chat':
-                case 'from':
-                    if ($id = data_get($message, 'id')) {
-
-                        if (!in_array($id, $this->telegramEntitiesFound)) {
-
-                            if ($telegramIdentity = $this->collectUserFromUpdateObject($message)) {
-                                $this->telegramEntitiesFound[] = $telegramIdentity->telegram_id;
-                            }
-
-                        }
-                    }
-                    break;
-
-                // case 'left_chat_participant':
-                case 'left_chat_member':
-                    // remove this entity
-                    break;
-            }
-        }
-
-        return true;
+        return !!app('website_base_config')->getValue('channels.telegram.enabled', false);
     }
 
     /**
-     * 1) Create or update the TelegramIdentity for the given telegram user id
-     * 2) Create the User model related to the TelegramIdentity
-     *
-     * @param  array  $telegramUser
-     * @return TelegramIdentity|null
+     * @return ModelAttributeAssignment|Model|null
      */
-    private function collectUserFromUpdateObject(array $telegramUser): ?TelegramIdentity
+    public function getUserAttributeWithTelegramId(): ModelAttributeAssignment|Model|null
     {
-        $map = [
-            'telegram_id'   => 'id',
-            'type'          => 'type',
-            'display_name'  => fn() => data_get($telegramUser, 'first_name', data_get($telegramUser, 'title', '???')),
-            'username'      => 'username',
-            'language_code' => 'language_code',
-            'is_bot'        => fn() => data_get($telegramUser, 'is_bot', false),
-        ];
+        return ModelAttributeAssignment::with(['modelAttribute'])->where('model', '=', \App\Models\User::class)
+            ->whereHas('modelAttribute', function ($query) {
+                return $query->where('code', '=', 'telegram_id');
+            })->first();
+    }
 
-        $modelData = [];
-        // fill model data if field exists ...
-        foreach ($map as $mapKey => $mapValue) {
-            if (app('system_base')->isCallableClosure($mapValue)) {
-                $modelData[$mapKey] = $mapValue();
-            } else {
-                if (isset($telegramUser[$mapValue])) {
-                    $modelData[$mapKey] = $telegramUser[$mapValue];
+    /**
+     * @return array
+     */
+    public function findUsersHavingTelegramId(): array
+    {
+        if ($attr = $this->getUserAttributeWithTelegramId()) {
+            if ($builder = DB::table(User::getAttributeTypeTableName($attr->attribute_type))
+                ->where('model_attribute_assignment_id', '=', $attr->id)
+            ) {
+                // model_id is user id
+                return $builder->pluck('model_id')->toArray();
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @param  string  $telegramId
+     *
+     * @return int user id or 0
+     */
+    public function findUserByTelegramId(string $telegramId): int
+    {
+        if ($attr = $this->getUserAttributeWithTelegramId()) {
+            if ($builder = DB::table(User::getAttributeTypeTableName($attr->attribute_type))
+                ->where('model_attribute_assignment_id', '=', $attr->id)
+                ->where('value', '=', $telegramId)
+            ) {
+                if ($attrIds = $builder->pluck('model_id')->toArray()) { // model_id is user id
+
+                    // should not more than 1 ...
+                    if (count($attrIds) > 1) {
+                        $this->error("Telegram id was assigned to more than one users.", [$attrIds, __METHOD__]);
+
+                        return 0;
+                    }
+
+                    // @todo: check specific model exists?
+
+                    return reset($attrIds);
                 }
             }
         }
 
-        // Create or update Telegram Identity and User related to this identity ...
-        if ($u = $this->websiteTelegramService->ensureTelegramUser($modelData)) {
-            return $u['TelegramIdentity'];
+        return 0;
+    }
+
+    /**
+     * Create or update a TelegramIdentity
+     * Optionally also calls ensureUserByTelegramIdentity() to create a user
+     *
+     * @param  array  $telegramIdentityModelData
+     * @param  array  $typeFilterForUserModel  in user models only add this types. for humans types use [null]
+     *
+     * @return array
+     */
+    public function ensureTelegramUser(
+        array $telegramIdentityModelData,
+        array $typeFilterForUserModel = [
+            TelegramIdentity::TYPE_GROUP,
+            TelegramIdentity::TYPE_CHANNEL,
+        ]
+    ): array {
+
+        $result = [
+            'User'             => null,
+            'TelegramIdentity' => null,
+        ];
+
+        if ($telegramIdentityFound = $this->ensureTelegramIdentity($telegramIdentityModelData)) {
+
+            // create or update a user represent telegram user, channel or group
+            if (in_array($telegramIdentityFound->type, $typeFilterForUserModel)) {
+                $user = $this->ensureUserByTelegramIdentity($telegramIdentityFound);
+                $result['User'] = $user;
+            }
+
+            //
+            $result['TelegramIdentity'] = $telegramIdentityFound;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create or update a TelegramIdentity
+     *
+     * @param  array  $telegramIdentityModelData
+     *
+     * @return TelegramIdentity|null
+     */
+    public function ensureTelegramIdentity(array $telegramIdentityModelData): ?TelegramIdentity
+    {
+        if ($telegramUserId = data_get($telegramIdentityModelData, 'telegram_id')) {
+            if ($telegramIdentityFound = TelegramIdentity::with([])->where('telegram_id', $telegramUserId)->first()) {
+                $telegramIdentityFound->update($telegramIdentityModelData);
+            } else {
+                $telegramIdentityFound = TelegramIdentity::create([
+                    'telegram_id' => $telegramUserId,
+                    ... $telegramIdentityModelData,
+                ]);
+            }
+
+            //
+            return $telegramIdentityFound;
         }
 
         return null;
     }
 
     /**
-     * @param  string  $message
-     * @param  string  $chatId
-     * @param  array  $buttonContainer
+     * @param  array  $typeFilterForUserModel
+     *
      * @return void
-     * @throws TelegramSDKException
      */
-    public function apiSendMessage(string $message, string $chatId, array $buttonContainer = []): void
-    {
-        $sendData = [
-            'chat_id'                  => $chatId,
-            'text'                     => $message,
-            'parse_mode'               => 'HTML',
-            'disable_notification'     => false,
-            'disable_web_page_preview' => true,
-        ];
-
-        if ($buttonContainer) {
-            $sendData['reply_markup'] = json_encode([
-                'inline_keyboard' => $buttonContainer
-            ]);
+    public function ensureUsersByAllTelegramIdentities(
+        array $typeFilterForUserModel = [
+            TelegramIdentity::TYPE_GROUP,
+            TelegramIdentity::TYPE_CHANNEL,
+        ]
+    ): void {
+        $telegramEntities = TelegramIdentity::with([])->where('is_bot', 0)->whereIn('type', $typeFilterForUserModel)->get();
+        if ($telegramEntities->isNotEmpty()) {
+            $this->debug("Telegram entities relevant for user model: ".$telegramEntities->count().". Creating missing users.");
+            foreach ($telegramEntities as $telegramEntity) {
+                $this->ensureUserByTelegramIdentity($telegramEntity);
+            }
         }
-
-        $bot = $this->getDefaultBot();
-        $bot->sendMessage($sendData);
     }
 
     /**
-     * Get 1) default bot by core_configs and 2) by default in config/telegram.php
+     * Creates or update a user related to a TelegramIdentity
      *
-     * @return string
-     */
-    public function getDefaultBotName(): string
-    {
-        return $this->config->get('notification.channels.telegram.bot', Telegram::getConfig('default', ''));
-    }
-
-    /**
-     * @return Api
-     */
-    public function getDefaultBot(): Api
-    {
-        return Telegram::bot($this->getDefaultBotName());
-    }
-
-    /**
-     * Get groups from db.
+     * @param  TelegramIdentity  $telegramEntity
      *
-     * @param  string  $botName  from config "telegram.bots"
-     * @param  array  $groupsAndChannels
-     * @return Collection|false
+     * @return User|null
      */
-    public function getBotGroups(string $botName = '',
-        array $groupsAndChannels = [TelegramIdentity::TYPE_GROUP, TelegramIdentity::TYPE_CHANNEL]): Collection|false
+    public function ensureUserByTelegramIdentity(TelegramIdentity $telegramEntity): ?User
     {
-        if (!$botName) {
-            if (!($botName = $this->getDefaultBotName())) {
-                return false;
+        if ($userId = $this->findUserByTelegramId($telegramEntity->telegram_id)) {
+
+            return app(User::class)->with([])->whereId($userId)->first();
+
+        } else {
+            // create user assigned/related to this telegram id ...
+            /** @var User $user */
+            $user = app(User::class);
+            /** @var User $user */
+            $user = $user->makeWithDefaults([
+                'name'     => app(UserService::class)->getNextAvailableUserName($telegramEntity->display_name),
+                'email'    => 'fake_'.Str::orderedUuid().'@local.test',
+                'password' => Str::random(30),
+            ]);
+
+            // force channel to telegram
+            $this->setUserPreferredChannel($user, $telegramEntity);
+
+            // save user
+            $user->save();
+            $this->info(sprintf("User for telegram entity created. ID: '%s', Name: '%s'", $user->getKey(), $user->name));
+
+            $groupsAndChannels = [TelegramIdentity::TYPE_GROUP, TelegramIdentity::TYPE_CHANNEL];
+            if (($telegramEntity->is_bot) || (in_array($telegramEntity->type, $groupsAndChannels))) {
+                //  Call this AFTER saving (to get a valid user_id). Add acl group puppets/no humans ...
+                if ($aclGroup = AclGroup::where('name', AclGroup::GROUP_NON_HUMANS)->first()) {
+                    $user->aclGroups()->attach($aclGroup);
+                }
             }
         }
 
-        // get the bot itself ...
-        // $botApi = Telegram::bot($botName);
-        if (!($botIdentity = TelegramIdentity::with([])->where('username', $botName)->first())) {
-            return false;
-        }
-
-        // get chats from bot ...
-        return $botIdentity->children->whereIn('type', $groupsAndChannels);
+        return $user;
     }
 
     /**
-     * subject and content will extra be rendered by Blade.
+     * @param  User              $user
+     * @param  TelegramIdentity  $telegramEntity
      *
-     * @param  array{
-     *     user:User,
-     *     subject:string,
-     *     content:string,
-     *     view_path:string
-     * }  $customContentData
-     * @return string
+     * @return void
      */
-    public function prepareTelegramMessage(array $customContentData): string
+    public function setUserPreferredChannel(User $user, TelegramIdentity $telegramEntity): void
     {
-        if ($customContentData['subject'] ?? null) {
-            $customContentData['subject'] = trim(Blade::render($customContentData['subject'], $customContentData));
+        // add extra attribute: telegram_id
+        $user->setExtraAttribute('telegram_id', $telegramEntity->telegram_id);
+        $user->setExtraAttribute('use_telegram', true);
+        $channels = $user->getExtraAttribute('preferred_notification_channels', []);
+        if (!in_array(Telegram::name, $channels)) {
+            Arr::prepend($channels, Telegram::name);
         }
-        if ($customContentData['content'] ?? null) {
-            $customContentData['content'] = trim(Blade::render($customContentData['content'], $customContentData));
-        }
-        // $viewPath = data_get($customContentData, 'view_path', 'telegram-api::telegram.default-message');
-        $viewPath = ($customContentData['view_path'] ?? '') ?: 'telegram-api::telegram.default-message'; // data_get() not working here
-        return view($viewPath, $customContentData);
+        $user->setExtraAttribute('preferred_notification_channels', $channels);
     }
 
 }
