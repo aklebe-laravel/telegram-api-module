@@ -11,7 +11,7 @@ class FinalFormElements
     {
         switch (true) {
             case $event->form instanceof UserProfile:
-                $event->form->formLivewire->addMessageBoxButton('telegram-delete-me', 'website-base');
+                $event->form->formLivewire->addMessageBoxButton('telegram-delete-me', 'telegram-api');
                 break;
 
             default:
