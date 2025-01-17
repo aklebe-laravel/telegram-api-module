@@ -91,7 +91,7 @@ class BaseComponentActionCalled
                 $user->setExtraAttribute('telegram_id', null);
                 $user->setExtraAttribute('use_telegram', false);
                 // remove preferred channel when its telegram
-                $prefChannels = data_get($user->extraAttributes, 'preferred_notification_channels');
+                $prefChannels = $user->getPreferredNotificationChannels();
                 if (in_array(Telegram::name, $prefChannels)) {
                     if (($key = array_search(Telegram::name, $prefChannels)) !== false) {
                         unset($prefChannels[$key]);

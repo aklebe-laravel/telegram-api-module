@@ -220,7 +220,7 @@ class TelegramService extends BaseService
         // add extra attribute: telegram_id
         $user->setExtraAttribute('telegram_id', $telegramEntity->telegram_id);
         $user->setExtraAttribute('use_telegram', true);
-        $channels = $user->getExtraAttribute('preferred_notification_channels', []);
+        $channels = $user->getPreferredNotificationChannels();
         if (!in_array(Telegram::name, $channels)) {
             $channels = Arr::prepend($channels, Telegram::name);
         }
