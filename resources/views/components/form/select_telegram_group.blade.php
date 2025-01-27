@@ -1,6 +1,5 @@
 @php
     use Illuminate\Http\Resources\Json\JsonResource;
-    use Modules\Form\app\Forms\Base\NativeObjectBase;
     use Modules\Form\app\Forms\Base\ModelBase;
     use Modules\TelegramApi\app\Services\TelegramApiService;
     use Modules\Form\app\Http\Livewire\Form\Base\NativeObjectBase as NativeObjectBaseLivewire;
@@ -40,5 +39,5 @@
 
 @endphp
 @include('form::components.form.select', [
-    'options' => app('system_base')->toHtmlSelectOptions($telegramGroups, ['display_name'], 'id', app('system_base')->getHtmlSelectOptionNoValue('No choice', NativeObjectBase::UNSELECT_RELATION_IDENT)),
+    'options' => app('system_base')->toHtmlSelectOptions($telegramGroups, ['display_name'], 'id', app('system_base')->selectOptionsSimple[app('system_base')::selectValueNoChoice]),
     ])

@@ -85,7 +85,7 @@ class TelegramIdentity extends ModelBase
                                     'type'            => [
                                         'html_element' => 'select',
                                         'disabled'     => true,
-                                        'options'      => [...app('system_base')->getHtmlSelectOptionNoValue('No choice'), ... TelegramIdentityModel::Types],
+                                        'options'      => [...app('system_base')->toSelectOptionSimple('No choice'), ... TelegramIdentityModel::Types],
                                         'label'        => __('Type'),
                                         'css_group'    => 'col-12 col-md-6 col-lg-3',
                                     ],
