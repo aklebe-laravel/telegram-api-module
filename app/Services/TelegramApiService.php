@@ -6,8 +6,8 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
 use Modules\SystemBase\app\Services\Base\BaseService;
+use Modules\SystemBase\app\Services\CacheService;
 use Modules\TelegramApi\app\Models\TelegramIdentity;
 use Modules\WebsiteBase\app\Services\ConfigService;
 use Telegram\Bot\Api;
@@ -57,9 +57,7 @@ class TelegramApiService extends BaseService
 
         try {
 
-            $ttlDefault = config('system-base.cache.default_ttl', 1);
-            $ttl = config('telegram.bots_update_ttl', $ttlDefault);
-            Cache::remember('TELEGRAM_BOTS_UPDATE', $ttl, function () {
+            app(CacheService::class)->rememberUseConfig('TELEGRAM_BOTS_UPDATE', 'telegram.bots_update_ttl', function () {
 
                 foreach (config('telegram.bots') as $botName => $bot) {
 
