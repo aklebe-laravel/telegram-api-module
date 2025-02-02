@@ -7,8 +7,8 @@ return [
                 'content' => 'ask_delete_telegram_connection',
                 // constant names from defaultActions[] or closure
                 'actions' => [
-                    'cancel',
-                    'telegram-delete-me',
+                    'system-base::cancel',
+                    'telegram-api::telegram-delete-me',
                 ],
             ],
         ],

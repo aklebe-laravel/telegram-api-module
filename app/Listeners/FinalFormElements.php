@@ -4,6 +4,7 @@ namespace Modules\TelegramApi\app\Listeners;
 
 use Modules\Form\app\Events\FinalFormElements as FinalFormElementsEvent;
 use Modules\Market\app\Forms\UserProfile;
+use Modules\WebsiteBase\app\Services\WebsiteService;
 
 class FinalFormElements
 {
@@ -11,7 +12,8 @@ class FinalFormElements
     {
         switch (true) {
             case $event->form instanceof UserProfile:
-                $event->form->formLivewire->addMessageBoxButton('telegram-delete-me', 'telegram-api');
+                app(WebsiteService::class)->provideMessageBoxButtons('telegram');
+
                 break;
 
             default:

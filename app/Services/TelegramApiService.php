@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Blade;
 use Modules\SystemBase\app\Services\Base\BaseService;
 use Modules\SystemBase\app\Services\CacheService;
 use Modules\TelegramApi\app\Models\TelegramIdentity;
-use Modules\WebsiteBase\app\Services\ConfigService;
+use Modules\WebsiteBase\app\Services\CoreConfigService;
 use Telegram\Bot\Api;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Objects\Message;
@@ -26,9 +26,9 @@ class TelegramApiService extends BaseService
     protected array $telegramEntitiesFound = [];
 
     /**
-     * @var ConfigService
+     * @var CoreConfigService
      */
-    protected ConfigService $configService;
+    protected CoreConfigService $configService;
 
     /**
      *
@@ -37,7 +37,7 @@ class TelegramApiService extends BaseService
     {
         parent::__construct();
 
-        $this->configService = app(ConfigService::class);
+        $this->configService = app(CoreConfigService::class);
     }
 
     /**
