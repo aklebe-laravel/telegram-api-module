@@ -27,7 +27,7 @@ class SendNotificationTest extends TestCase
                 Log::debug(sprintf("Preparing user for telegram: %s", $user->name));
                 $user->setExtraAttribute('telegram_id', $telegramReceiverID);
                 $user->setExtraAttribute('use_telegram', true);
-                $user->setExtraAttribute('preferred_notification_channels', [Telegram::name]);
+                $user->setExtraAttribute(User::ATTR_NOTIFICATION_CHANNELS, [Telegram::name]);
 
                 // save it
                 if ($user->save()) {

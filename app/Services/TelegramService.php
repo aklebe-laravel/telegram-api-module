@@ -224,7 +224,7 @@ class TelegramService extends BaseService
         if (!in_array(Telegram::name, $channels)) {
             $channels = Arr::prepend($channels, Telegram::name);
         }
-        $user->setExtraAttribute('preferred_notification_channels', $channels);
+        $user->setExtraAttribute(User::ATTR_NOTIFICATION_CHANNELS, $channels);
     }
 
 }

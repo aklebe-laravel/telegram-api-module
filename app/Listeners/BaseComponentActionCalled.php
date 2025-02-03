@@ -95,7 +95,7 @@ class BaseComponentActionCalled
                 if (in_array(Telegram::name, $prefChannels)) {
                     if (($key = array_search(Telegram::name, $prefChannels)) !== false) {
                         unset($prefChannels[$key]);
-                        $user->setExtraAttribute('preferred_notification_channels', $prefChannels);
+                        $user->setExtraAttribute(UserModel::ATTR_NOTIFICATION_CHANNELS, $prefChannels);
                     }
                 }
                 // save it
