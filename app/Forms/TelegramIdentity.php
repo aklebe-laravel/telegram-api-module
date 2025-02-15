@@ -3,6 +3,7 @@
 namespace Modules\TelegramApi\app\Forms;
 
 use Modules\Form\app\Forms\Base\ModelBase;
+use Modules\Form\app\Services\FormService;
 use Modules\TelegramApi\app\Models\TelegramIdentity as TelegramIdentityModel;
 
 class TelegramIdentity extends ModelBase
@@ -38,6 +39,9 @@ class TelegramIdentity extends ModelBase
     public function getFormElements(): array
     {
         $parentFormData = parent::getFormElements();
+
+        /** @var FormService $formService */
+        $formService = app(FormService::class);
 
         return [
             ... $parentFormData,
@@ -89,19 +93,11 @@ class TelegramIdentity extends ModelBase
                                         'label'        => __('Type'),
                                         'css_group'    => 'col-12 col-md-6 col-lg-3',
                                     ],
-                                    'language_code'   => [
-                                        'html_element' => 'website-base::select_country',
-                                        //'disabled'     => true,
-                                        'label'        => __('Language'),
-                                        'cmpCi'        => true,
-                                        'description'  => __('Language'),
-                                        'validator'    => [
-                                            'nullable',
-                                            'string',
-                                            'Max:10',
-                                        ],
-                                        'css_group'    => 'col-12 col-md-6 col-lg-3',
-                                    ],
+                                    'language_code'   => $formService->getFormElement('country', [
+                                        'label'       => __('Language'),
+                                        'description' => __('Language'),
+                                        'css_group'   => 'col-12 col-md-6 col-lg-3',
+                                    ]),
                                     'display_name'    => [
                                         'html_element' => 'text',
                                         'disabled'     => true,

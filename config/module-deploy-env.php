@@ -33,5 +33,13 @@ return [
                 ],
             ],
         ],
+        '0003' => [
+            [
+                'cmd'     => 'models',
+                'sources' => [
+                    'core-config.php',
+                ],
+            ],
+        ],
     ],
 ];

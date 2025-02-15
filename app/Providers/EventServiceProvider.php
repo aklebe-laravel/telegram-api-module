@@ -3,6 +3,7 @@
 namespace Modules\TelegramApi\app\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Form\app\Events\InitFormElements;
 use Modules\SystemBase\app\Events\Livewire\BaseComponentActionCalled;
 use Modules\TelegramApi\app\Listeners\FinalFormElements;
 use Modules\WebsiteBase\app\Events\ValidNotificationChannel;
@@ -15,15 +16,19 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        BaseComponentActionCalled::class => [
+        BaseComponentActionCalled::class                  => [
             \Modules\TelegramApi\app\Listeners\BaseComponentActionCalled::class,
         ],
         \Modules\Form\app\Events\FinalFormElements::class => [
-            FinalFormElements::class
+            FinalFormElements::class,
         ],
-        ValidNotificationChannel::class                 => [
+        ValidNotificationChannel::class                   => [
             \Modules\TelegramApi\app\Listeners\ValidNotificationChannel::class,
         ],
+        InitFormElements::class                           => [
+            \Modules\TelegramApi\app\Listeners\InitFormElements::class,
+        ],
+
     ];
 
     /**
