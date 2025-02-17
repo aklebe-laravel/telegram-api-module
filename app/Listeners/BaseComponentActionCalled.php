@@ -7,6 +7,7 @@ use Modules\SystemBase\app\Events\Livewire\BaseComponentActionCalled as SystemBa
 use Modules\TelegramApi\app\Services\Notification\Channels\Telegram;
 use Modules\TelegramApi\app\Services\TelegramService;
 use Modules\WebsiteBase\app\Http\Livewire\Form\UserProfile;
+use Modules\WebsiteBase\app\Models\Base\ExtraAttributeModel;
 use Modules\WebsiteBase\app\Models\User as UserModel;
 
 class BaseComponentActionCalled
@@ -95,7 +96,7 @@ class BaseComponentActionCalled
                 if (in_array(Telegram::name, $prefChannels)) {
                     if (($key = array_search(Telegram::name, $prefChannels)) !== false) {
                         unset($prefChannels[$key]);
-                        $user->setExtraAttribute(UserModel::ATTR_NOTIFICATION_CHANNELS, $prefChannels);
+                        $user->setExtraAttribute(ExtraAttributeModel::ATTR_PREFERRED_NOTIFICATION_CHANNELS, $prefChannels);
                     }
                 }
                 // save it

@@ -11,6 +11,7 @@ use Modules\Acl\app\Services\UserService;
 use Modules\SystemBase\app\Services\Base\BaseService;
 use Modules\TelegramApi\app\Models\TelegramIdentity;
 use Modules\TelegramApi\app\Services\Notification\Channels\Telegram;
+use Modules\WebsiteBase\app\Models\Base\ExtraAttributeModel;
 use Modules\WebsiteBase\app\Models\ModelAttributeAssignment;
 use Modules\WebsiteBase\app\Models\User;
 
@@ -224,7 +225,7 @@ class TelegramService extends BaseService
         if (!in_array(Telegram::name, $channels)) {
             $channels = Arr::prepend($channels, Telegram::name);
         }
-        $user->setExtraAttribute(User::ATTR_NOTIFICATION_CHANNELS, $channels);
+        $user->setExtraAttribute(ExtraAttributeModel::ATTR_PREFERRED_NOTIFICATION_CHANNELS, $channels);
     }
 
 }

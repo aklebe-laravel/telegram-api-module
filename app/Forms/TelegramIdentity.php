@@ -5,6 +5,7 @@ namespace Modules\TelegramApi\app\Forms;
 use Modules\Form\app\Forms\Base\ModelBase;
 use Modules\Form\app\Services\FormService;
 use Modules\TelegramApi\app\Models\TelegramIdentity as TelegramIdentityModel;
+use Modules\WebsiteBase\app\Models\Base\ExtraAttributeModel;
 
 class TelegramIdentity extends ModelBase
 {
@@ -93,7 +94,7 @@ class TelegramIdentity extends ModelBase
                                         'label'        => __('Type'),
                                         'css_group'    => 'col-12 col-md-6 col-lg-3',
                                     ],
-                                    'language_code'   => $formService->getFormElement('country', [
+                                    'language_code'   => $formService->getFormElement(ExtraAttributeModel::ATTR_COUNTRY, [
                                         'label'       => __('Language'),
                                         'description' => __('Language'),
                                         'css_group'   => 'col-12 col-md-6 col-lg-3',

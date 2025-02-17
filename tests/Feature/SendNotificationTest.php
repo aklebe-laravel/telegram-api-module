@@ -5,6 +5,7 @@ namespace Modules\TelegramApi\tests\Feature;
 use Illuminate\Support\Facades\Log;
 use Modules\SystemBase\tests\TestCase;
 use Modules\TelegramApi\app\Services\Notification\Channels\Telegram;
+use Modules\WebsiteBase\app\Models\Base\ExtraAttributeModel;
 use Modules\WebsiteBase\app\Models\NotificationEvent;
 use Modules\WebsiteBase\app\Models\User;
 use Modules\WebsiteBase\app\Services\NotificationEventService;
@@ -27,7 +28,7 @@ class SendNotificationTest extends TestCase
                 Log::debug(sprintf("Preparing user for telegram: %s", $user->name));
                 $user->setExtraAttribute('telegram_id', $telegramReceiverID);
                 $user->setExtraAttribute('use_telegram', true);
-                $user->setExtraAttribute(User::ATTR_NOTIFICATION_CHANNELS, [Telegram::name]);
+                $user->setExtraAttribute(ExtraAttributeModel::ATTR_PREFERRED_NOTIFICATION_CHANNELS, [Telegram::name]);
 
                 // save it
                 if ($user->save()) {
