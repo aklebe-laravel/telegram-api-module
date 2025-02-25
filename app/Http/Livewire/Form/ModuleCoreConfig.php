@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TelegramApi\app\Forms;
+namespace Modules\TelegramApi\app\Http\Livewire\Form;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\SystemBase\app\Forms\Base\ModuleCoreConfigBase;
+use Modules\SystemBase\app\Http\Livewire\Form\Base\ModuleCoreConfigBase;
 use Modules\TelegramApi\app\Models\TelegramIdentity as TelegramIdentityModel;
 
 class ModuleCoreConfig extends ModuleCoreConfigBase

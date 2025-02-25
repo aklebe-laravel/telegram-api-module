@@ -1,12 +1,10 @@
 @php
     use Illuminate\Http\Resources\Json\JsonResource;
-    use Modules\Form\app\Forms\Base\ModelBase;
     use Modules\SystemBase\app\Services\ModuleService;
     use Modules\TelegramApi\app\Models\TelegramIdentity;
     use Modules\TelegramApi\app\Services\TelegramApiService;
-    use Modules\WebsiteBase\app\Forms\UserProfile;
     use Modules\TelegramApi\app\Services\TelegramService;
-    use Modules\Form\app\Http\Livewire\Form\Base\NativeObjectBase as NativeObjectBaseLivewire;
+    use Modules\Form\app\Http\Livewire\Form\Base\NativeObjectBase as NativeObjectBaseLivewire;use Modules\WebsiteBase\app\Http\Livewire\Form\UserProfile;
 
     /**
      *
@@ -22,7 +20,6 @@
      * @var array $html_data
      * @var array $x_data
      * @var JsonResource $object
-     * @var ModelBase $form_instance
      * @var NativeObjectBaseLivewire $form_livewire
      */
 
@@ -71,7 +68,7 @@
                     <button class="btn btn-danger" x-on:click="messageBox.show('telegram.login.delete', {{ json_encode($messageBoxParamsDelete) }} )">{{ __('Delete Telegram ID ...') }}</button>
                 @else
                     <div>
-                        @if($form_instance instanceof UserProfile)
+                        @if($form_livewire instanceof UserProfile)
                             <div class="pt-5 pb-2">
                                 <div class="telegram-login">
                                     <script async src="https://telegram.org/js/telegram-widget.js?22"
@@ -80,7 +77,7 @@
                                             data-request-access="write"></script>
                                     <script type="text/javascript">
                                         function onTelegramAuth(user) {
-                                            Livewire.dispatchTo('website-base::form.user-profile', 'module-action', {'action':'telegram-assign-me','itemId':user});
+                                            Livewire.dispatchTo('website-base::form.user-profile', 'module-action', {'action': 'telegram-assign-me', 'itemId': user});
                                         }
                                     </script>
                                 </div>
