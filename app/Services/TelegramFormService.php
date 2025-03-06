@@ -13,7 +13,7 @@ class TelegramFormService extends BaseService
      */
     public static function getFormElementTelegramGroupOptions(): array
     {
-        return app(CacheService::class)->rememberForever('form_element.select_telegram_group.options', function () {
+        return app(CacheService::class)->rememberFrontend('form_element.select_telegram_group.options', function () {
             /** @var SystemService $systemService */
             $systemService = app('system_base');
 

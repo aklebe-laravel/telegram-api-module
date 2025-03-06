@@ -4,25 +4,16 @@
     use Modules\TelegramApi\app\Models\TelegramIdentity;
     use Modules\TelegramApi\app\Services\TelegramApiService;
     use Modules\TelegramApi\app\Services\TelegramService;
-    use Modules\Form\app\Http\Livewire\Form\Base\NativeObjectBase as NativeObjectBaseLivewire;use Modules\WebsiteBase\app\Http\Livewire\Form\UserProfile;
+    use Modules\WebsiteBase\app\Http\Livewire\Form\UserProfile;
+    use Modules\Form\app\Http\Livewire\Form\Base\NativeObjectBase;
 
     /**
-     *
-     * @var string $name
-     * @var string $label
-     * @var string $value
-     * @var bool $read_only
-     * @var string $description
-     * @var string $css_classes
-     * @var string $x_model
-     * @var string $xModelName
-     * @var string $livewire
-     * @var array $html_data
-     * @var array $x_data
-     * @var JsonResource $object
-     * @var NativeObjectBaseLivewire $form_livewire
+     * @var NativeObjectBase $form_instance
+     * @var array $data
      */
 
+    /* @var JsonResource $object */
+    $object = $form_instance->getDataSource();
     /** @var ModuleService $moduleService */
     $moduleService = app(ModuleService::class);
     $_telegramId = null;
@@ -48,17 +39,17 @@
 
 @endphp
 <div wire:ignore.self
-     class="form-group form-label-group p-4 {{ $css_group }} {{ $_telegramId ? 'bg-success-subtle' : 'bg-danger-subtle' }}">
+     class="form-group form-label-group p-4 {{ $data['css_group'] }} {{ $_telegramId ? 'bg-success-subtle' : 'bg-danger-subtle' }}">
     @if ($moduleTelegramExists)
         @if ($_telegramId)
             <div class="{{ $_telegramId ? 'bg-success-subtle' : 'bg-warning-subtle' }}">
-                {{ $label }}:
+                {{ $data['label'] }}:
                 <span class="bi bi-check"></span>
                 <span class="">{{ $_telegramIdentityModel ? $_telegramIdentityModel->display_name : $_telegramId }}</span>
             </div>
         @else
             <div class="text-danger">
-                {{ $label }}:
+                {{ $data['label'] }}:
                 {{ __('Currently not in use.') }}
             </div>
         @endif
@@ -68,7 +59,7 @@
                     <button class="btn btn-danger" x-on:click="messageBox.show('telegram.login.delete', {{ json_encode($messageBoxParamsDelete) }} )">{{ __('Delete Telegram ID ...') }}</button>
                 @else
                     <div>
-                        @if($form_livewire instanceof UserProfile)
+                        @if($form_instance instanceof UserProfile)
                             <div class="pt-5 pb-2">
                                 <div class="telegram-login">
                                     <script async src="https://telegram.org/js/telegram-widget.js?22"
