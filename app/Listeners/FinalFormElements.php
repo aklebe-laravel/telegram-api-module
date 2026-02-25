@@ -3,7 +3,7 @@
 namespace Modules\TelegramApi\app\Listeners;
 
 use Modules\Form\app\Events\FinalFormElements as FinalFormElementsEvent;
-use Modules\Market\app\Forms\UserProfile;
+use Modules\WebsiteBase\app\Http\Livewire\Form\UserProfile;
 use Modules\WebsiteBase\app\Services\WebsiteService;
 
 class FinalFormElements
